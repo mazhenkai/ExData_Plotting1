@@ -1,0 +1,39 @@
+
+setwd("F:/学术文档/上海大学研究生学习相关/网络课程学习/数据科学/数据推论课程/作业dir")
+
+list.files()
+
+fileurl<-"https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip"
+
+download.file(url = fileurl,destfile= "./Fhousehold_power_consumption.zip")
+
+unzip(zipfile="./Fhousehold_power_consumption.zip") 
+
+mydata<-read.table("household_power_consumption.txt",header=T,sep = ";")
+head(mydata)
+
+
+mydata[,1]<-as.Date(mydata[,1], "%d/%m/%Y")
+
+mydata1 <- mydata[as.character(mydata$Date) %in% c("1/2/2007", "2/2/2007"),]
+
+mydata1$dateTime = paste(mydata1$Date, mydata1$Time)
+
+mydata1$dateTime <- strptime(mydata1$dateTime, "%d/%m/%Y %H:%M:%S")
+
+attach(mydata1)
+png("plot4.png", width=480, height=480, units="px")
+# Plot Energy sub metering
+par(mfrow=c(2,2))
+plot(dateTime, as.numeric(as.character(Global_active_power)), type="l", xlab="", ylab="Global Active Power")
+
+plot(dateTime, as.numeric(as.character(Voltage)), type="l", xlab="datetime", ylab="Voltage")
+
+plot(dateTime, as.numeric(as.character(Sub_metering_1)), type="l", xlab="", ylab="Energy sub metering", ylim=c(0,40))
+lines(dateTime, as.numeric(as.character(Sub_metering_2)), col="red")
+lines(dateTime, as.numeric(as.character(Sub_metering_3)), col="blue")
+legend("topright", lty=1, bty="n", col = c("black", "red", "blue"), legend = c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3" ))
+
+plot(dateTime, as.numeric(as.character(Global_reactive_power)), type="l", xlab="datetime", ylab="Global_reactive_power")
+
+dev.off()
